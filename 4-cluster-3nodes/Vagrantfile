@@ -1,0 +1,26 @@
+# vagrant init ubuntu/bionic64
+
+hosts = [
+  { :hostname => 'revproxy', :ip => '192.168.56.10', :mem => 512,  :cpu => 1 },
+  { :hostname => 'www1',   :ip => '192.168.56.21', :mem => 1024, :cpu => 2 },
+  { :hostname => 'www2',   :ip => '192.168.56.22', :mem => 1024, :cpu => 2 },
+]
+
+
+Vagrant.configure("2") do |config|
+  hosts.each do |host|
+    config.vm.define host[:hostname] do |hostconfig|
+      hostconfig.vm.box = "ubuntu/bionic64"
+      hostconfig.vm.hostname = host[:hostname]
+      hostconfig.vm.network :private_network, ip: host[:ip]
+      hostconfig.vm.provider :virtualbox do |vbox|
+        vbox.gui = false
+        vbox.linked_clone = true
+        vbox.memory = host[:mem]
+        vbox.cpus = host[:cpu]
+      end
+    end
+  end
+end
+
+
