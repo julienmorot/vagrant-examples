@@ -1,0 +1,25 @@
+# vagrant init ubuntu/bionic64
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/bionic64"
+  config.vm.hostname = "vagrantbox"
+  config.vm.network "private_network", ip: "192.168.56.10", virtualbox__intnet: "nat"
+  
+  config.vm.provider :virtualbox do |vbox|
+    vbox.gui = false
+    vbox.linked_clone = true
+    vbox.memory = 1024
+    vbox.cpus = 1
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    apt-get -y install puppet 
+  SHELL
+  
+  config.vm.provision "puppet" do |puppet|
+    puppet.manifests_path = "manifests"
+  end
+
+end
+
